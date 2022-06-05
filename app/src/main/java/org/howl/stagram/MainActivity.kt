@@ -1,9 +1,6 @@
 package org.howl.stagram
 
 import android.Manifest
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -22,8 +19,6 @@ import org.howl.stagram.navigation.AlarmFragment
 import org.howl.stagram.navigation.DetailViewFragment
 import org.howl.stagram.navigation.GridFragment
 import org.howl.stagram.navigation.UserFragment
-import org.howl.stagram.navigation.util.MyReceiver
-import java.util.*
 
 class MainActivity : AppCompatActivity(){
     lateinit var binding: ActivityMainBinding
@@ -38,8 +33,6 @@ class MainActivity : AppCompatActivity(){
         message = FirebaseMessaging.getInstance()
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
-
-        binding.toolbarLogo.setOnClickListener {setAlarm()}
 
         initNavigationBar()
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
@@ -118,39 +111,6 @@ class MainActivity : AppCompatActivity(){
             }
 
         }
-    }
-
-    fun setAlarm() {
-            val calender = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 17)
-                set(Calendar.MINUTE, 59)
-            }
-
-//            calender.add(Calendar.DATE, 180)
-//            val df: DateFormat = SimpleDateFormat("yyyy-MM-dd")
-//            Log.e("날짜", "current: ${df.format(calender.time)}")
-            //알람 매니저 가져오기.
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-            val intent = Intent(this, MyReceiver::class.java)
-            intent.putExtra("send","다미 메롱")
-            val pendingIntent = PendingIntent.getBroadcast(
-                this,
-                M_ALARM_REQUEST_CODE,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            ) // 있으면 새로 만든거로 업데이트
-
-            alarmManager.setInexactRepeating( // 정시에 반복
-                AlarmManager.RTC_WAKEUP, // RTC_WAKEUP : 실제 시간 기준으로 wakeup , ELAPSED_REALTIME_WAKEUP : 부팅 시간 기준으로 wakeup
-                calender.timeInMillis, // 언제 알람이 발동할지.
-                AlarmManager.INTERVAL_DAY, // 하루에 한번씩.
-                pendingIntent
-            )
-    }
-
-    companion object {
-        private val M_ALARM_REQUEST_CODE = 1000
     }
 }
 
